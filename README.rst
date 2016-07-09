@@ -88,6 +88,23 @@ Magic! Some people say that's bytecode manipulation, but isn't that all the
 same?
 
 
+Installing
+----------
+
+You can either use pip::
+
+  pip install --upgrade git+https://github.com/danilobellini/pyscanprev
+
+Or setup.py directly::
+
+  python3 setup.py install
+
+This software depends on `bytecode`_\ , which requires Python 3.4+.
+
+.. _`bytecode`:
+  https://pypi.python.org/pypi/bytecode
+
+
 ----
 
 Copyright (C) 2016 Danilo de Jesus da Silva Bellini
