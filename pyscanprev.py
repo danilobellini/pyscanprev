@@ -134,3 +134,16 @@ def last(iterable):
         pass
     return item
 
+
+def prepend(value, iterable):
+    """
+    Generator for an iterable that has to yield one extra value
+    BEFORE iterating over its contents.
+
+    >>> next(prepend(2, []))
+    2
+    >>> list(prepend(True, range(5)))
+    [True, 0, 1, 2, 3, 4]
+    """
+    yield value
+    yield from iterable
