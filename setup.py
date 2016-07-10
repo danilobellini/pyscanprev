@@ -7,6 +7,7 @@ metadata = {
   "author": "Danilo J. S. Bellini",
   "author_email": "danilo.bellini.gmail.com",
   "url": "http://github.com/danilobellini/pyscanprev",
+  "license": "MIT",
   "py_modules": ["pyscanprev"],
   "install_requires": ["bytecode"],
 }
@@ -22,6 +23,7 @@ metadata["classifiers"] = """
 Development Status :: 2 - Pre-Alpha
 Intended Audience :: Developers
 Intended Audience :: Other Audience
+License :: OSI Approved :: MIT License
 Operating System :: POSIX :: Linux
 Operating System :: OS Independent
 Programming Language :: Python
