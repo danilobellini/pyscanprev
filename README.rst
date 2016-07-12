@@ -48,11 +48,13 @@ Example
   >>> next(g) # [el - abs(prev) for el in prepend(15, [5, 6, 7, 8])]
   [15, -10, -4, 3, 5]
 
-Actually, Python already have a way to do that, but...
+Actually, Python already have a way to do that, but... `see by yourself`_\ .
 
 The goal here is to find an easy way to read the previous value in a
 generator expression and anything alike, so that the scan/fold
 (accumulate/reduce) code can be written using them. Readability counts!
+
+.. _`see by yourself`: examples/comparison.rst
 
 
 Tell me, how is that possible at all?
