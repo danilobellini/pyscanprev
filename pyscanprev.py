@@ -5,7 +5,7 @@ def code_mix(code, **changes):
     """
     Creates a new code object based on another, as a copy where the given
     keyword parameters are seen as attributes to be modified. See
-    code.keys for the keyword list.
+    code_mix.keys for the keyword list.
     """
     args = (changes.get(arg, getattr(code, arg)) for arg in code_mix.keys)
     return types.CodeType(*args)
@@ -21,7 +21,8 @@ code_mix.keys = [
 def function_mix(func, **changes):
     """
     Creates a new function object based on another, as a copy where the given
-    keyword attributes are modified. See function.keys for the keyword list.
+    keyword attributes are modified. See function_mix.keys for the keyword
+    list.
 
     Info: The valid keyword arguments are the keys, but the function
     attributes are actually the dunders (double underscored prefix and suffix)
