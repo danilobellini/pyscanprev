@@ -1,5 +1,6 @@
 """
-Py.test configuration for using a custom printer function for doctests.
+Py.test configuration for using a custom printer function for doctests and
+to fix functional.scanl1 to work on Python 3.
 """
 import sys, functools
 
@@ -27,13 +28,18 @@ def printer(value):
 
 def pytest_configure(config):
     """
-    Py.test hook for changing doctest.DocTestRunner so that the displayhook
-    calls the given printer method.
+    Py.test hook for changing doctest.DocTestRunner so that the
+    ``sys.displayhook`` calls the given printer method while a doctest is
+    running, and also for fixing functional.scanl1 to call the ``__next__``
+    method instead of the Python2-specific ``next`` method.
     """
-    import doctest
+    import doctest, functional, inspect
 
     enable_printer = temp_replace(sys, "__displayhook__", printer)
     doctest.DocTestRunner.run = enable_printer(doctest.DocTestRunner.run)
     # As the public method doctest.DocTestRunner.run replaces sys.displayhook
     # by sys.__displayhook__, we could also had changed "displayhook" on the
     # _DocTestRunner__run protected method
+
+    exec(inspect.getsource(functional.scanl1).replace("next", "__next__"),
+         functional.__dict__, functional.__dict__)
