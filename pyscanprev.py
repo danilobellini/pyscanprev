@@ -1,6 +1,8 @@
 # By Danilo J. S. Bellini
 import types, collections, bytecode
 
+_EMPTY = object()
+
 def code_mix(code, **changes):
     """
     Creates a new code object based on another, as a copy where the given
@@ -148,3 +150,18 @@ def prepend(value, iterable):
     """
     yield value
     yield from iterable
+
+
+def scan(func, iterable, start=_EMPTY):
+    """
+    Scan higher-order function.
+
+    The positional arguments are alike to the ``functools.reduce`` signature.
+    """
+    it = iter(iterable)
+    if start is _EMPTY:
+        start = next(it)
+    yield start
+    for item in it:
+        start = func(start, item)
+        yield start

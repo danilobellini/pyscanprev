@@ -10,9 +10,11 @@ it's available in the function `itertools.accumulate`_\ .
 
 This module has a ``enable_scan_implicit(name)`` decorator that allows
 functions to have generator expressions and list/set comprehensions with
-the variable name in its body for accessing the previous resulting value,
-and a ``last`` function that makes it straightforward to write a reduce/fold
-from the scan result.
+a variable (the one with the given name) in its body for accessing the
+previous resulting value, a ``last`` function that makes it straightforward
+to write a reduce/fold from the scan result, the ``scan`` function with a
+more featured implementation consistent to the ``functools.reduce`` function
+signature, and more.
 
 .. _`scan`:
     https://en.wikipedia.org/wiki/Prefix_sum#Scan_higher_order_function

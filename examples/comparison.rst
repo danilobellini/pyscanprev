@@ -5,7 +5,7 @@ On `README.rst`_, you've seen that this package allows us to:
 
 .. code-block:: python
 
-  >>> from pyscanprev import enable_scan_implicit, last, prepend
+  >>> from pyscanprev import enable_scan_implicit, last, prepend, scan
   >>> @enable_scan_implicit("prev")
   ... def gen():
   ...     yield [prev + el for el in range(15)]
@@ -18,7 +18,7 @@ For the remaining, I'm also assuming that we have:
 
 .. code-block:: python
 
-  >>> import itertools, functools
+  >>> import itertools, functools, operator
 
 The basic idea in that decorator is that it changes the expressions to ensure
 a variable with the given name (``prev`` in this example) always have the
@@ -29,8 +29,8 @@ needed as any expression with ``prev`` has no meaning before there is a
 ``prev``, and that keeps the input iterable length equal to the output iterable
 length, besides being the behavior of scan implementations.
 
-But how would we do that without this package? Are ther other scan
-implementations?
+But how would we do that without this package? And with ``pyscanprev.scan``?
+Are there other scan implementations?
 
 .. _`README.rst`: ../README.rst
 
@@ -49,21 +49,24 @@ That's actually this::
 
   [0, 0+1, 0+1+2, 0+1+2+3, 0+1+2+3+4, ...]
 
-The same result can be obtained by using ``itertools.accumulate``
-(Python 3.2+):
+The same result can be obtained by using either ``itertools.accumulate``
+(Python 3.2+) or ``pyscanprev.scan``:
 
 .. code-block:: python
 
   >>> list(itertools.accumulate(range(15)))
   [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105]
+  >>> list(scan(operator.add, range(15)))
+  [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105]
 
-As that's exactly what it does. The first zero isn't the result of any sum,
+As that's exactly what they do. The first zero isn't the result of any sum,
 and ``accumulate`` returns a generator function. These are the same:
 
 .. code-block:: python
 
   (prev + el for el in iterable) # PyScanPrev, assuming in a enabled context
   itertools.accumulate(iterable) # Python 3.2+ standard library
+  scan(operator.add, iterable)   # PyScanPrev scan, reminds functional.reduce
 
 There's a way to do a cumulative sum with a 3-for-sections list comprehension.
 `README.rst`_ rationale section contains some description about how this
@@ -120,20 +123,25 @@ product of squared values?
 That's like the list comprehension, but applied to a set, showing there's no
 ``-1`` indexing being done at all.
 
-Again, itertools.accumulate will help us. But for now, we'll use a resource
-it gained afterwards, the second optional argument (Python 3.3+):
+Again, ``pyscanprev.scan`` and ``itertools.accumulate`` can give us
+alternative approaches. Now, we'll use the second ``accumulate`` argument
+(Python 3.3+), which defaults to ``operator.add``:
 
 .. code-block:: python
 
   >>> set(itertools.accumulate([1, -2, 3, 2], lambda prev, x: prev * x ** 2))
   {1, 4, 36, 144}
+  >>> set(scan(lambda prev, x: prev * x ** 2, [1, -2, 3, 2]))
+  {1, 4, 36, 144}
 
-This extra argument is some binary operation callable. These are the same:
+This extra argument is some binary operation callable, and it's needed for
+``scan``, but appears reversed with the iterable. These are the same:
 
 .. code-block:: python
 
   (func(prev, x) for x in iterable)    # PyScanPrev in an enabled context
   itertools.accumulate(iterable, func) # Python 3.3+ standard library
+  scan(func, iterable)                 # PyScanPrev scan with implicit start
 
 Just as before, be careful that the first value 1 isn't a square. The result
 is::
@@ -192,7 +200,7 @@ You can call ``last`` on a ``itertools.accumulate`` generator result:
 .. code-block:: python
 
   >>> last(itertools.accumulate([1, -2, 3, 2],
-  ...      lambda prev, x: prev * x ** 2))
+  ...                           lambda prev, x: prev * x ** 2))
   144
 
 On Python 2 there were a built-in called ``reduce``. Python 3 moved it to the
@@ -203,7 +211,11 @@ On Python 2 there were a built-in called ``reduce``. Python 3 moved it to the
   >>> functools.reduce(lambda prev, x: prev * x ** 2, [1, -2, 3, 2])
   144
 
-Notice the reversed parameter order.
+Notice the reversed parameter order when compared to ``accumulate``. Does it
+remind you of the ``pyscanprev.scan`` function?
+
+  >>> last(scan(lambda prev, x: prev * x ** 2, [1, -2, 3, 2]))
+  144
 
 We don't need to care about the starting value to get the last one, so we
 don't need to prepend ``start`` to the result:
@@ -246,8 +258,8 @@ This for loop version is simpler than the previous ones:
 Prepend scan with start value (explicit)
 ----------------------------------------
 
-Let's do something a little bit different, segregating the start value from
-the beginning.
+Let's do something a little bit different, with a custom starting value for
+the iterable.
 
 .. code-block:: python
 
@@ -272,6 +284,27 @@ As ``itertools.accumulate`` doesn't have a start parameter, you can use the
   [15, -10, -4, 3, 5]
 
 Did you know the first lambda argument is prev?
+
+There's a 3rd parameter for ``scan``, a starting value like the 3rd ``reduce``
+parameter:
+
+  >>> list(scan(lambda prev, el: el - abs(prev), [5, 6, 7, 8], 15))
+  [15, -10, -4, 3, 5]
+
+There's also a possible solution with ``functools.reduce``:
+
+  >>> functools.reduce(lambda h, el: h + [el - abs(h[-1])],
+  ...                  [5, 6, 7, 8], [15])
+  [15, -10, -4, 3, 5]
+
+The function was changed, but that gives us a scan from a fold. These are
+about the same::
+
+  # Python standard library, works on Python 2
+  functools.reduce(lambda h, x: h + [func(h[-1], x)], iterable, [start])
+
+  # PyScanPrev scan function
+  list(scan(func, iterable, start))
 
 A 3-for-sections solution:
 
