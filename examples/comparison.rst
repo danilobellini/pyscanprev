@@ -5,8 +5,8 @@ On `README.rst`_, you've seen that this package allows us to:
 
 .. code-block:: python
 
-  >>> from pyscanprev import enable_scan_implicit, last, prepend, scan
-  >>> @enable_scan_implicit("prev")
+  >>> from pyscanprev import enable_scan, last, prepend, scan
+  >>> @enable_scan("prev")
   ... def gen():
   ...     yield [prev + el for el in range(15)]
   ...     yield {prev * x ** 2 for x in [1, -2, 3, 2]}

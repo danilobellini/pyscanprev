@@ -8,7 +8,7 @@ with the previous output.
 map and a reduce/fold, returning all steps of a fold. Since Python 3.3,
 it's available in the function `itertools.accumulate`_\ .
 
-This module has a ``enable_scan_implicit(name)`` decorator that allows
+This module has a ``enable_scan(name)`` decorator that allows
 functions to have generator expressions and list/set comprehensions with
 a variable (the one with the given name) in its body for accessing the
 previous resulting value, a ``last`` function that makes it straightforward
@@ -28,8 +28,8 @@ Example
 
 .. code-block:: python
 
-  >>> from pyscanprev import enable_scan_implicit, last, prepend
-  >>> @enable_scan_implicit("prev")
+  >>> from pyscanprev import enable_scan, last, prepend
+  >>> @enable_scan("prev")
   ... def gen():
   ...     yield [prev + el for el in range(15)]
   ...     yield {prev * x ** 2 for x in [1, -2, 3, 2]}

@@ -37,18 +37,10 @@ def function_mix(func, **changes):
 function_mix.keys = ["code", "globals", "name", "defaults", "closure"]
 
 
-def enable_scan_implicit(name):
-    """Decorator/function version of ``scan_implicit_code``"""
-    def decorator(func):
-        return function_mix(func, code=scan_implicit_code(func.__code__, name))
-    return decorator
-
-
-def scan_implicit_single_bytecode(code, name):
+def _enable_scan_single_bytecode(code, name):
     """
-    Part of the ``scan_implicit_code`` that applies the "scan implicit"
-    behavior on a single given list/set comprehension or generator
-    expression code.
+    Part of the ``_enable_scan`` that applies the scan behavior on a single
+    given list/set comprehension or generator expression code.
     """
     bc = bytecode.Bytecode.from_code(code)
     Instr = bytecode.Instr
@@ -102,31 +94,43 @@ def scan_implicit_single_bytecode(code, name):
     return bc.to_code()
 
 
-def scan_implicit_code(code, name):
+def _enable_scan(code, name):
     """
-    Returns a modified version of the given code that implements the
-    "scan implicit" behavior.
-
-    Changes every list/set comprehension and generator expression that has
-    in its body the variable with the given name but doesn't iterate on it.
-
-    The "scan implicit" behavior for the generator/list/set:
-
-    - The first output value is the first input value;
-    - The previous result is stored on a variable with the given ``name``.
+    Recursive function that enables the scan on generator expressions and
+    list/set comprehensions. See the ``enable_scan`` function docs for more
+    information.
     """
     if name in code.co_names \
     and code.co_name in {"<listcomp>", "<setcomp>", "<genexpr>"}:
-        code = scan_implicit_single_bytecode(code, name)
+        code = _enable_scan_single_bytecode(code, name)
 
     consts = list(code.co_consts)
     for idx, subcode in enumerate(code.co_consts):
         if isinstance(subcode, types.CodeType):
-            consts[idx] = scan_implicit_code(subcode, name)
+            consts[idx] = _enable_scan(subcode, name)
 
     if consts == list(code.co_consts):
         return code
     return code_mix(code, co_consts=tuple(consts))
+
+
+def enable_scan(name):
+    """
+    Parametrized decorator that enables the scan behavior on
+    generators/lists/sets.
+
+    Changes every list/set comprehension and generator expression that has
+    in its body the variable with the given name but doesn't iterate on it,
+    returning a modified version of the given code.
+
+    The scan behavior is:
+
+    - The first output value (append/add/yield) is the first input value;
+    - The previous result is stored in a variable with the given ``name``.
+    """
+    def decorator(func):
+        return function_mix(func, code=_enable_scan(func.__code__, name))
+    return decorator
 
 
 def last(iterable):
