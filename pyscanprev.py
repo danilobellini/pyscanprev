@@ -152,16 +152,19 @@ def prepend(value, iterable):
     yield from iterable
 
 
-def scan(func, iterable, start=_EMPTY):
+def scan(func, iterable, start=_EMPTY, *, echo_start=True):
     """
     Scan higher-order function.
 
-    The positional arguments are alike to the ``functools.reduce`` signature.
+    The first 3 positional arguments are alike to the ``functools.reduce``
+    signature. This function accepts an extra optional ``echo_start``
+    parameter that controls whether the first value should be in the output.
     """
     it = iter(iterable)
     if start is _EMPTY:
         start = next(it)
-    yield start
+    if echo_start:
+        yield start
     for item in it:
         start = func(start, item)
         yield start

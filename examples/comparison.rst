@@ -94,7 +94,12 @@ we can:
 Which isn't the same for a general function, as it's applying a scan to a
 ``[0, 0, 1, 2, 3, ..., 14]`` input and then getting rid from the first output.
 When using this kind of solution either you have an identity/neutral element,
-or you don't care about echoing the first value to the result.
+or you don't care about echoing the first value to the result. There's an
+``echo_start`` keyword argument for ``scan`` that, together with its optional
+``start`` argument, allows doing the same:
+
+  >>> list(scan(operator.add, range(15), start=0, echo_start=False))
+  [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105]
 
 Obviously, you can also do the same appending imperatively within a for loop:
 
@@ -168,7 +173,17 @@ Getting rid from the union is still possible as ``1`` is the identity:
   ...                 for prev in [prev * x ** 2]})
   {1, 4, 36, 144}
 
-But in this case there's a ``1 * 1`` being done to result in that 1.
+But in this case there's a ``1 * 1`` being done to result in that 1. The same
+can be done with ``scan`` using a command to avoid "echoing" the start to the
+result:
+
+  >>> set(scan(lambda prev, x: prev * x ** 2,
+  ...          [1, -2, 3, 2], echo_start=False))
+  {4, 36, 144}
+  >>> set(scan(lambda prev, x: prev * x ** 2,
+  ...          [1, -2, 3, 2],
+  ...          start=1, echo_start=False))
+  {1, 4, 36, 144}
 
 A for loop imperative approach would be:
 
@@ -215,6 +230,9 @@ Notice the reversed parameter order when compared to ``accumulate``. Does it
 remind you of the ``pyscanprev.scan`` function?
 
   >>> last(scan(lambda prev, x: prev * x ** 2, [1, -2, 3, 2]))
+  144
+  >>> last(scan(lambda prev, x: prev * x ** 2,
+  ...           [1, -2, 3, 2], echo_start=False))
   144
 
 We don't need to care about the starting value to get the last one, so we
@@ -286,9 +304,13 @@ As ``itertools.accumulate`` doesn't have a start parameter, you can use the
 Did you know the first lambda argument is prev?
 
 There's a 3rd parameter for ``scan``, a starting value like the 3rd ``reduce``
-parameter:
+parameter. We already used it, but as a keyword argument:
 
   >>> list(scan(lambda prev, el: el - abs(prev), [5, 6, 7, 8], 15))
+  [15, -10, -4, 3, 5]
+  >>> list(scan(func = lambda prev, el: el - abs(prev),
+  ...           iterable = [5, 6, 7, 8],
+  ...           start = 15))
   [15, -10, -4, 3, 5]
 
 There's also a possible solution with ``functools.reduce``:
