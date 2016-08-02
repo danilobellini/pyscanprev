@@ -127,6 +127,17 @@ def enable_scan(name):
 
     - The first output value (append/add/yield) is the first input value;
     - The previous result is stored in a variable with the given ``name``.
+
+    Example
+    -------
+
+    >>> @enable_scan("p")
+    ... def powerset(iterable):
+    ...     return [set.union(p, {item}) for item in prepend(set(), iterable)]
+    >>> powerset([1, 2, 3])
+    [set(), {1}, {1, 2}, {1, 2, 3}]
+    >>> powerset("Test")
+    [set(), {'T'}, {'T', 'e'}, {'T', 'e', 's'}, {'T', 'e', 's', 't'}]
     """
     def decorator(func):
         return function_mix(func, code=_enable_scan(func.__code__, name))
