@@ -20,7 +20,8 @@ Let's implement that recursion using a scan instead of a function call:
 
   >>> @enable_scan("prev")
   ... def gray_upto(n):
-  ...     return [prefixall("0", prev) + prefixall("1", prev[::-1]) for unused in prepend([""], range(n))]
+  ...     return [prefixall("0", prev) + prefixall("1", prev[::-1])
+  ...             for unused in prepend([""], range(n))]
 
 And that's it. Testing with a 4-bits code:
 

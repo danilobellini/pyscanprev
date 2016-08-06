@@ -56,7 +56,6 @@ def _enable_scan_single_bytecode(code, name):
     for_idx = next(idx for idx, instr in enumerate(bc)
                        if getattr(instr, "name", None) == "FOR_ITER")
     for_instr = bc[for_idx]
-    lineno = for_instr.lineno
     begin_label_idx = for_idx - 1
     try:
         filter_last_idx = last(idx for idx, instr in enumerate(bc)
@@ -78,7 +77,7 @@ def _enable_scan_single_bytecode(code, name):
     }[bc.name]
     bc[begin_label_idx:begin_label_idx] = (
         [instr.copy() for instr in bc[for_idx:filter_last_idx + 1]] +
-        [Instr(*args, lineno=lineno) for args in heading_instructions]
+        [Instr(*args) for args in heading_instructions]
     )
 
     # Adds ending block that stores the result to prev before a new iteration
@@ -89,7 +88,7 @@ def _enable_scan_single_bytecode(code, name):
     ending_instructions = [("DUP_TOP",),
                            ("STORE_FAST", name)]
     bc[ending_idx:ending_idx] = \
-        [Instr(*args, lineno=lineno) for args in ending_instructions]
+        [Instr(*args) for args in ending_instructions]
 
     return bc.to_code()
 
