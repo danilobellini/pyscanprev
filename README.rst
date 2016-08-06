@@ -56,7 +56,12 @@ The goal here is to find an easy way to read the previous value in a
 generator expression and anything alike, so that the scan/fold
 (accumulate/reduce) code can be written using them. Readability counts!
 
+See more examples:
+
+* `Gray code generation`_
+
 .. _`see by yourself`: examples/comparison.rst
+.. _`Gray code generation`: examples/gray.rst
 
 
 Tell me, how is that possible at all?
