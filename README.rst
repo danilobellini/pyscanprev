@@ -59,9 +59,12 @@ generator expression and anything alike, so that the scan/fold
 See more examples:
 
 * `Gray code generation`_
+* `itertools.accumulate documentation examples`_\ : running product,
+  running maximum, amortization tables and chaotic logistic map
 
 .. _`see by yourself`: examples/comparison.rst
 .. _`Gray code generation`: examples/gray.rst
+.. _`itertools.accumulate documentation examples`: examples/itertools-accumulate-docs.rst
 
 
 Tell me, how is that possible at all?
