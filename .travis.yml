@@ -1,0 +1,16 @@
+language: python
+
+sudo: false
+
+python:
+- 3.5
+- 3.4
+
+before_install:
+- export TOXENV=py$(python -V 2>&1 | sed 's/[^0-9]//g;s/.//3g')-travis
+
+install:
+- pip install tox
+- tox -vv --notest
+
+script: tox -vv

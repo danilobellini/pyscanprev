@@ -1,6 +1,16 @@
 PyScanPrev
 ==========
 
+.. image::
+  https://img.shields.io/travis/danilobellini/pyscanprev/master.svg
+  :target: https://travis-ci.org/danilobellini/pyscanprev
+  :alt: Travis CI builds
+
+.. image::
+  https://img.shields.io/coveralls/danilobellini/pyscanprev/master.svg
+  :target: https://coveralls.io/r/danilobellini/pyscanprev
+  :alt: Coveralls coverage report
+
 Scan and reduce/fold as generator expressions and list/set comprehensions
 with the previous output.
 
