@@ -71,10 +71,13 @@ See more examples:
 * `Gray code generation`_
 * `itertools.accumulate documentation examples`_\ : running product,
   running maximum, amortization tables and chaotic logistic map
+* `Conditional toggling`_\, aLtErNaTiNg CaSeS, iGnOrInG oThEr
+  ChArAcTeRs
 
 .. _`see by yourself`: examples/comparison.rst
 .. _`Gray code generation`: examples/gray.rst
 .. _`itertools.accumulate documentation examples`: examples/itertools-accumulate-docs.rst
+.. _`Conditional toggling`: examples/conditional-toggling.rst
 
 
 Tell me, how is that possible at all?
