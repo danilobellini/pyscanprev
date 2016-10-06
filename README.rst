@@ -73,11 +73,13 @@ See more examples:
   running maximum, amortization tables and chaotic logistic map
 * `Conditional toggling`_\, aLtErNaTiNg CaSeS, iGnOrInG oThEr
   ChArAcTeRs
+* `IIR filter`_\, an example with a single pole lowpass digital filter
 
 .. _`see by yourself`: examples/comparison.rst
 .. _`Gray code generation`: examples/gray.rst
 .. _`itertools.accumulate documentation examples`: examples/itertools-accumulate-docs.rst
 .. _`Conditional toggling`: examples/conditional-toggling.rst
+.. _`IIR filter`: examples/iir-filter.rst
 
 
 Tell me, how is that possible at all?
