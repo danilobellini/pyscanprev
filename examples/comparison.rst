@@ -1,24 +1,49 @@
 Comparison Example
 ==================
 
-On `README.rst`_, you've seen that this package allows us to:
+The goal of this example is to show how to do the same scan/accumulate
+and fold/reduce operations using:
+
+- The PyScanPrev package;
+- The Python standard library (``itertools.accumulate`` and
+  ``functools.reduce``);
+- 3-for-sections comprehensions.
+
+For the remaining, I'm assuming that we have imported everything:
 
 .. code-block:: python
 
   >>> from pyscanprev import enable_scan, last, prepend, scan
+  >>> import itertools, functools, operator
+
+
+Enabling PyScanPrev on comprehensions
+-------------------------------------
+
+This package allows us to:
+
+.. code-block:: python
+
   >>> @enable_scan("prev")
   ... def gen():
   ...     yield [prev + el for el in range(15)]
   ...     yield {prev * x ** 2 for x in [1, -2, 3, 2]}
   ...     yield last(prev * x ** 2 for x in [1, -2, 3, 2])
   ...     yield [el - abs(prev) for el in prepend(15, [5, 6, 7, 8])]
+  ...
   >>> g = gen()
-
-For the remaining, I'm also assuming that we have:
-
-.. code-block:: python
-
-  >>> import itertools, functools, operator
+  >>>         # List comprehension (scan)
+  >>> next(g) # [prev + el for el in range(15)]
+  [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105]
+  >>>         # Set comprehension
+  >>> next(g) # {prev * x ** 2 for x in [1, -2, 3, 2]}
+  {1, 4, 36, 144}
+  >>>         # Generator expression (scan) + "last" (reduce/fold)
+  >>> next(g) # last(prev * x ** 2 for x in [1, -2, 3, 2])
+  144
+  >>>         # Prepend a value (scan with explicit start)
+  >>> next(g) # [el - abs(prev) for el in prepend(15, [5, 6, 7, 8])]
+  [15, -10, -4, 3, 5]
 
 The basic idea in that decorator is that it changes the expressions to ensure
 a variable with the given name (``prev`` in this example) always have the
@@ -27,12 +52,10 @@ internal loops (i.e., the last values appended/added/yielded). It also
 appends/adds/yields the first input (target variable value). That's somehow
 needed as any expression with ``prev`` has no meaning before there is a
 ``prev``, and that keeps the input iterable length equal to the output iterable
-length, besides being the behavior of scan implementations.
+length, besides being the behavior of other scan implementations.
 
 But how would we do that without this package? And with ``pyscanprev.scan``?
 Are there other scan implementations?
-
-.. _`README.rst`: ../README.rst
 
 
 Cumulative sum with list comprehension
@@ -42,6 +65,7 @@ The first example is a cumulative sum using a list comprehension.
 
 .. code-block:: python
 
+  >>> g = gen()
   >>> next(g) # [prev + el for el in range(15)]
   [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105]
 

@@ -33,7 +33,7 @@ To model the "state" for toggling, one would need to know:
 
 That's where the scan could help. The solution for a switcher would be
 an xor (or "different") operation between the state and a flag that
-states if the state should toggle or not, i.e.:
+tells us if the state should toggle or not, i.e.:
 
 ============= ================= =========
 Current state Should it toggle? New state

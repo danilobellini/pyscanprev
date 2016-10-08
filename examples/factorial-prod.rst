@@ -7,6 +7,9 @@ This example requires:
 
   >>> from pyscanprev import enable_scan, last
 
+Actually, these are simple reduce/fold examples, not scan examples,
+but PyScanPrev enables us to write them as generator expressions.
+
 
 Factorial
 ---------
@@ -62,8 +65,7 @@ iterator.
   ...     except StopIteration:
   ...         return 1
 
-That's a simple reduce/fold. Let's evaluate some products using
-that function:
+Let's evaluate some products:
 
 .. code-block:: python
 

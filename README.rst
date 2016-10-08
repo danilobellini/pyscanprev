@@ -11,77 +11,171 @@ PyScanPrev
   :target: https://coveralls.io/r/danilobellini/pyscanprev
   :alt: Coveralls coverage report
 
-Scan and reduce/fold as generator expressions and list/set comprehensions
-with the previous output.
+Scan and reduce/fold as generator expressions and list/set
+comprehensions that can access the previous iteration output.
 
-`Scan`_ is a high order function that can be seen as something between a
-map and a reduce/fold, returning all steps of a fold. Since Python 3.3,
-it's available in the function `itertools.accumulate`_\ .
-
-This module has a ``enable_scan(name)`` decorator that allows
-functions to have generator expressions and list/set comprehensions with
-a variable (the one with the given name) in its body for accessing the
-previous resulting value, a ``last`` function that makes it straightforward
-to write a reduce/fold from the scan result, the ``scan`` function with a
-more featured implementation consistent to the ``functools.reduce`` function
-signature, and more.
-
-.. _`scan`:
-    https://en.wikipedia.org/wiki/Prefix_sum#Scan_higher_order_function
-
-.. _`itertools.accumulate`:
-    https://docs.python.org/3.3/library/itertools.html#itertools.accumulate
-
-
-Example
--------
+Would you like to replace this:
 
 .. code-block:: python
 
-  >>> from pyscanprev import enable_scan, last, prepend
-  >>> @enable_scan("prev")
-  ... def gen():
-  ...     yield [prev + el for el in range(15)]
-  ...     yield {prev * x ** 2 for x in [1, -2, 3, 2]}
-  ...     yield last(prev * x ** 2 for x in [1, -2, 3, 2])
-  ...     yield [el - abs(prev) for el in prepend(15, [5, 6, 7, 8])]
-  ...
-  >>> g = gen()
-  >>>         # List comprehension (scan)
-  >>> next(g) # [prev + el for el in range(15)]
-  [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105]
-  >>>         # Set comprehension
-  >>> next(g) # {prev * x ** 2 for x in [1, -2, 3, 2]}
-  {1, 4, 36, 144}
-  >>>         # Generator expression (scan) + "last" (reduce/fold)
-  >>> next(g) # last(prev * x ** 2 for x in [1, -2, 3, 2])
-  144
-  >>>         # Prepend a value (scan with explicit start)
-  >>> next(g) # [el - abs(prev) for el in prepend(15, [5, 6, 7, 8])]
-  [15, -10, -4, 3, 5]
+  reduce(lambda prev, x: abs(prev - x), [2, 3, 4, 5])
 
-Actually, Python already have a way to do that, but... `see by yourself`_\ .
+by this?
+
+.. code-block:: python
+
+  last(abs(prev - x) for x in [2, 3, 4, 5])
+
+Why not?
+
+.. code-block:: python
+
+  >>> from functools import reduce
+  >>> from pyscanprev import enable_scan, last
+  >>> @enable_scan("prev")
+  ... def evaluate(data):
+  ...     return reduce(lambda prev, x: abs(prev - x), data), \
+  ...            last(abs(prev - x) for x in data)
+  >>> evaluate([2, 3, 4, 5])
+  (2, 2)
+
+
+Examples
+--------
+
+.. list-table::
+  :header-rows: 1
+
+  * - Example
+    - Description
+
+  * - `Comparison`_
+    - Simple scan/accumulate and fold/reduce examples using the
+      PyScanPrev resources, the Python standard library and
+      3-for-section comprehensions for comparing the readability
+      and expressiveness.
+
+  * - `Conditional Toggling`_
+    - Sometimes feedback isn't really required, but you should at
+      least store some state about what's going on in the input.
+      That's the case in this example, which toggles/updates the
+      state only for certain inputs, aLtErNaTiNg CaSeS, iGnOrInG oThEr
+      ChArAcTeRs. Historically, PyScanPrev was created after thinking
+      on how would be the simplest way to solve the problem described
+      in this example.
+
+  * - `Examples from the itertools.accumulate documentation`_
+    - This is a copy and an adaptation of the ``itertools.accumulate``
+      examples in the Python documentation to use the PyScanPrev
+      comprehensions instead of that standard library function. The
+      examples include:
+
+      - running product
+      - running maximum
+      - amortization tables
+      - chaotic logistic map
+
+  * - `Factorial and Multiplication`_
+    - Fold/reduce factorial and multiplication / product of a sequence
+      implementation using PyScanPrev.
+
+  * - `Gray Code`_
+    - Generating Gray codes using the definition is slower than using
+      bytewise operations, but the recursive definition can be written
+      as a scan/fold expression and is useful for testing, as this
+      example shows.
+
+  * - `IIR Filter`_
+    - DSP (Digital Signal Processing) applications ofter requires
+      feedback, i.e., accessing some previous output value in a
+      process. PyScanPrev can be used to write simple signal
+      processing models like IIR (Infinite Impuse Response) linear
+      filters. This is an example with a single pole lowpass digital
+      filter. For testing and displaying the results, this example
+      uses `AudioLazy`_ and `hipsterplot`_\ .
+
+.. _`Comparison`:
+  examples/comparison.rst
+.. _`Conditional Toggling`:
+  examples/conditional-toggling.rst
+.. _`Examples from the itertools.accumulate documentation`:
+  examples/itertools-accumulate-docs.rst
+.. _`Factorial and Multiplication`:
+  examples/factorial-prod.rst
+.. _`Gray Code`:
+  examples/gray.rst
+.. _`IIR Filter`:
+  examples/iir-filter.rst
+
+.. _`AudioLazy`: https://github.com/danilobellini/audiolazy
+.. _`hipsterplot`: https://github.com/imh/hipsterplot
+
+
+Why "Scan"?
+-----------
+
+`Scan`_ is a high order function that can be seen as something between
+the map and the reduce (fold) functions, returning all steps of a
+fold. Since Python 3.3, it's available in the function
+`itertools.accumulate`_\ .
 
 The goal here is to find an easy way to read the previous value in a
 generator expression and anything alike, so that the scan/fold
-(accumulate/reduce) code can be written using them. Readability counts!
+(accumulate/reduce) code can be written using them.
+`Readability counts`_\ !
 
-See more examples:
+.. _`Scan`:
+  https://en.wikipedia.org/wiki/Prefix_sum#Scan_higher_order_function
+.. _`itertools.accumulate`:
+  https://docs.python.org/library/itertools.html#itertools.accumulate
+.. _`Readability counts`:
+  https://www.python.org/dev/peps/pep-0020
 
-* `Factorial and Multiplication`_
-* `Gray code generation`_
-* `itertools.accumulate documentation examples`_\ : running product,
-  running maximum, amortization tables and chaotic logistic map
-* `Conditional toggling`_\, aLtErNaTiNg CaSeS, iGnOrInG oThEr
-  ChArAcTeRs
-* `IIR filter`_\, an example with a single pole lowpass digital filter
 
-.. _`see by yourself`: examples/comparison.rst
-.. _`Factorial and Multiplication`: examples/factorial-prod.rst
-.. _`Gray code generation`: examples/gray.rst
-.. _`itertools.accumulate documentation examples`: examples/itertools-accumulate-docs.rst
-.. _`Conditional toggling`: examples/conditional-toggling.rst
-.. _`IIR filter`: examples/iir-filter.rst
+Package contents
+----------------
+
+.. list-table::
+
+  * -
+      .. code-block:: python
+
+        enable_scan(name)
+
+      Decorator that allows functions to have generator expressions
+      and list/set comprehensions with a variable (the one with the
+      given name) in its body for accessing the previous resulting
+      value.
+
+  * -
+      .. code-block:: python
+
+        last(iterable)
+
+      Gets the last value from an iterable, making it straightforward
+      to write a reduce/fold from the scan result.
+
+  * -
+      .. code-block:: python
+
+        prepend(value, iterable)
+
+      A version of ``[value] + some_list`` for general iterables,
+      returning a generator. This function was created to allow
+      PyScanPrev-enabled generator expressions and list/set
+      comprehensions to include an explicit start value, but it can be
+      used to prepend a value in any context, e.g. to force a start
+      value on ``itertools.accumulate``.
+
+  * -
+      .. code-block:: python
+
+        scan(func, iterable, [start], *, echo_start=True)
+
+      It's an implementation of the scan higher order function with
+      more features than ``itertools.accumulate`` (the ``start`` and
+      the keyword-only ``echo_start`` parameters) and consistent to
+      the ``functools.reduce`` function signature.
 
 
 Tell me, how is that possible at all?
@@ -161,7 +255,6 @@ doesn't depend on ``func`` at all). To be really equivalent to the
 
 .. code-block:: python
 
-  >>> from itertools import accumulate
   >>> list(accumulate([0, 0, 1, 2, 3, 4]))[1:]
   [0, 1, 3, 6, 10]
 
@@ -270,7 +363,6 @@ alternative to that 3-for-sections list comprehension.
 
 .. _`functional`:
   https://pypi.python.org/pypi/bytecode
-
 .. _`4 scan and 4 fold Haskell functions`:
   https://hackage.haskell.org/package/base/docs/Data-List.html
 
