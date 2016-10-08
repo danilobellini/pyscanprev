@@ -68,6 +68,7 @@ generator expression and anything alike, so that the scan/fold
 
 See more examples:
 
+* `Factorial and Multiplication`_
 * `Gray code generation`_
 * `itertools.accumulate documentation examples`_\ : running product,
   running maximum, amortization tables and chaotic logistic map
@@ -76,6 +77,7 @@ See more examples:
 * `IIR filter`_\, an example with a single pole lowpass digital filter
 
 .. _`see by yourself`: examples/comparison.rst
+.. _`Factorial and Multiplication`: examples/factorial-prod.rst
 .. _`Gray code generation`: examples/gray.rst
 .. _`itertools.accumulate documentation examples`: examples/itertools-accumulate-docs.rst
 .. _`Conditional toggling`: examples/conditional-toggling.rst
