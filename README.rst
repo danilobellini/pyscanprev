@@ -97,6 +97,12 @@ Examples
       filter. For testing and displaying the results, this example
       uses `AudioLazy`_ and `hipsterplot`_\ .
 
+  * - `State-space model`_
+    - Simulation of linear discrete time modeling in control
+      engineering. The example gives an implementation of both time
+      varying and time invariant state-space models. These models are
+      then used to simulate an accumulator.
+
 .. _`Comparison`:
   examples/comparison.rst
 .. _`Conditional Toggling`:
@@ -111,6 +117,8 @@ Examples
   examples/gray.rst
 .. _`IIR Filter`:
   examples/iir-filter.rst
+.. _`State-space model`:
+  examples/state-space.rst
 
 .. _`AudioLazy`: https://github.com/danilobellini/audiolazy
 .. _`hipsterplot`: https://github.com/imh/hipsterplot
