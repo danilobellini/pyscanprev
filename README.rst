@@ -79,6 +79,9 @@ Examples
     - Fold/reduce factorial and multiplication / product of a sequence
       implementation using PyScanPrev.
 
+  * - `Fibonacci`_
+    - Fibonacci sequence with PyScanPrev.
+
   * - `Gray Code`_
     - Generating Gray codes using the definition is slower than using
       bytewise operations, but the recursive definition can be written
@@ -102,6 +105,8 @@ Examples
   examples/itertools-accumulate-docs.rst
 .. _`Factorial and Multiplication`:
   examples/factorial-prod.rst
+.. _`Fibonacci`:
+  examples/fibonacci.rst
 .. _`Gray Code`:
   examples/gray.rst
 .. _`IIR Filter`:
