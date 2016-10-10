@@ -8,6 +8,7 @@ This example requires:
   >>> from pyscanprev import enable_scan, prepend
   >>> import itertools
   >>> from numpy import mat
+  >>> from hipsterplot import plot
 
 
 Theory
@@ -81,6 +82,9 @@ Actually, the name ``p`` could have been ``xk``, but that would look
 confusing in the ``y`` generator expression, as it has ``xk`` as a
 target.
 
+In the following, these functions will be used to simulate an
+accumulator and a really simple mass-spring-damper system.
+
 
 Accumulator example
 -------------------
@@ -147,3 +151,154 @@ varying:
   ...               [0]]),
   ... )]
   [1, 2, 3, 4, 5, 10, 8, 6, 3, 0]
+
+
+Linear time invariant mass-spring-damper state-space model
+----------------------------------------------------------
+
+**Continuous time bucket-spring-damper model**
+
+There's a spring fixed on the ceiling with a damper, and we're going
+to put a bucket on it::
+
+       \
+       /
+       \
+       /
+      _|_
+    -     -
+    \~~~~~/
+     \   /
+      \_/
+
+The force equation for that system is::
+
+  m * a(t) = - m * g - c * v(t) - k * h(t)
+
+Where:
+
+- ``t`` is the time
+- ``m`` is the bucket mass including its contents
+- ``g`` is the gravity acceleration
+- ``c`` is the damping coefficient
+- ``k`` is the spring stiffness constant
+- ``a(t) = v̇(t)`` is the bucket acceleration
+- ``v(t) = ḣ(t)`` is the bucket velocity
+- ``h(t)`` is the bucket height
+
+Starting in ``h(0) = 0``, where the spring force (Hooke's law) is
+still zero. That's when the bucket is attached to the spring and
+left to oscillate.
+
+Everything could be seen as a function of time, and the dot above
+some symbols denotes the derivative with respect to the time.
+Let's define the state vector as a pair including the height and the
+velocity. If we want to see the bucket trajectory as the system
+output, this system would then be described by an equation like::
+
+  ⎡ḣ(t)⎤   ⎡  0     1 ⎤ ⎡h(t)⎤   ⎡ 0⎤
+  ⎢    ⎥ = ⎢          ⎥⋅⎢    ⎥ + ⎢  ⎥
+  ⎣v̇(t)⎦   ⎣-k/m  -c/m⎦ ⎣v(t)⎦   ⎣-g⎦
+
+               ⎡h(t)⎤
+  y(t) = [1 0]⋅⎢    ⎥
+               ⎣v(t)⎦
+
+That's a linear time invariant state model, with the continuous
+time formulation::
+
+  ẋ(t) = Aa⋅x(t) + Ba⋅u(t)
+  y(t) = Ca⋅x(t) + Da⋅u(t)
+
+         ⎡h(t)⎤
+  x(t) = ⎢    ⎥
+         ⎣v(t)⎦
+
+Where ``u(t)`` is the Heaviside step function (i.e., ``1`` for
+``k > 0``) and::
+
+       ⎡  0     1 ⎤         ⎡ 0⎤
+  Aa = ⎢          ⎥    Ba = ⎢  ⎥    Ca = [1 0]    Da = [0]
+       ⎣-k/m  -c/m⎦         ⎣-g⎦
+
+**Converting the system from continuous time to discrete time**
+
+The state derivative can be seen as::
+
+  ẋ(t) = lim   x(t + T) - x(t)
+         T->0  ───────────────
+                      T
+
+Suppose a sampling period of ``T`` where the system is seen only
+for ``t = k⋅T``, where ``k`` is a time index. If T is small, that
+ratio is an approximation to the continuous derivative, and we can
+convert the state equation to::
+
+  ẋ(t) = Aa⋅x(t) + Ba⋅u(t)
+  x(t + T) - x(t) = Aa⋅T⋅x(t) + Ba⋅T⋅u(t)
+  x(t + T) = (I + Aa⋅T)⋅x(t) + Ba⋅T⋅u(t)
+  x((k + 1)⋅T) = (I + Aa⋅T)⋅x(k⋅T) + Ba⋅T⋅u(k⋅T)
+  x[k + 1] = (I + Aa⋅T)⋅x[k] + Ba⋅T⋅u[k]
+
+And the output equation::
+
+  y(t) = Ca⋅x(t) + Da⋅u(t)
+  y(k⋅T) = Ca⋅x(k⋅T) + Da⋅u(k⋅T)
+  y[k] = Ca⋅x[k] + Da⋅u[k]
+
+Where ``I`` is the n x n eye matrix, and the square bracket notation
+``x[k]`` is a convenient way to write ``x(k⋅T)``. That gives us a
+mapping from the continuous time matrices to our digital sampled
+system matrices::
+
+  A = I + Aa⋅T
+  B = Ba⋅T
+  C = Ca
+  D = Da
+
+**Simulation with PyScanPrev**
+
+Then, our matrices are::
+
+      ⎡   1       T   ⎤        ⎡  0 ⎤
+  A = ⎢               ⎥    B = ⎢    ⎥    C = [1 0]    D = [0]
+      ⎣-k⋅T/m  1-c⋅T/m⎦        ⎣-g⋅T⎦
+
+Let's simulate it using the previously defined ``ltiss`` function for
+some actual values in SI (Système international d'unités):
+
+.. code-block:: python
+
+  >>> m = 5     # kilogram
+  >>> c = 2.5   # newton * second / metre, or kilogram / second
+  >>> k = 119.2 # newton / metre, or kilogram / second ** 2
+  >>> g = 9.8   # metre / second ** 2
+  >>> end = 5.7       # second
+  >>> num_k = 2850    # samples
+  >>> T = end / num_k # second/sample
+  >>> model = ltiss(
+  ...     A = mat([[   1  ,   T    ],
+  ...              [-k*T/m, 1-c*T/m]]),
+  ...     B = mat([[0], [-g*T]]),
+  ...     C = mat([[1, 0]]),
+  ...     D = 0)
+  >>> result = list(model(
+  ...     u = [1] * num_k, # Step function
+  ...     x0 = 0,
+  ... ))
+  >>> plot([yk[0, 0] for yk in result], num_x_chars=57)
+     -0.0255 #|                                                       
+     -0.0766  #                                                       
+     -0.1277  #         ###|                                          
+     -0.1788  ##        #  #         ###                              
+     -0.2299   #       ##  #|        # ##         ###                 
+     -0.2810   #       #    #       ##  #|       ## ##         ###    
+     -0.3321   #:      #    #       #    #       #   ##       ## ##   
+     -0.3832    #     ##    ##     ##    #|     ##    #      ##   |#  
+     -0.4343    #     #      #     #      #     #     |#    ##     ## 
+     -0.4854    #     #      #    ##      ##   #       ##  ##       ##
+     -0.5365    ##   ##      :#   #        #  ##        ####          
+     -0.5876     #   #        #  ##        ####                       
+     -0.6387     #   #        ##:#                                    
+     -0.6898     ## #|         ##                                     
+     -0.7409      ###                                                 

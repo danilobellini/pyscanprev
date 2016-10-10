@@ -101,7 +101,15 @@ Examples
     - Simulation of linear discrete time modeling in control
       engineering. The example gives an implementation of both time
       varying and time invariant state-space models. These models are
-      then used to simulate an accumulator.
+      then used to simulate:
+
+      - an accumulator
+      - a LTI (Linear Time Invariant) continuous time
+        mass-spring-damper SHM (Simple Harmonic Motion) model
+
+      The discretization process is included in the example, and the
+      simulations use `hipsterplot`_\  to plot the motion
+      path/trajectory.
 
 .. _`Comparison`:
   examples/comparison.rst
