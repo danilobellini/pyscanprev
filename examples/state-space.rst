@@ -10,6 +10,12 @@ This example requires:
   >>> from numpy import mat
   >>> from hipsterplot import plot
 
+The most sophisticated/interesting examples are the mass-spring-damper
+"bucket" models at the end of this text, which includes a SHM (Simple
+Harmonic Motion) example and a leaking bucket example (a time varying
+model). It's perhaps more interesting to see them as a motivation
+before reading/understanding how their model were built.
+
 
 Theory
 ------
@@ -81,9 +87,6 @@ functions, not ``numpy.array`` instances.
 Actually, the name ``p`` could have been ``xk``, but that would look
 confusing in the ``y`` generator expression, as it has ``xk`` as a
 target.
-
-In the following, these functions will be used to simulate an
-accumulator and a really simple mass-spring-damper system.
 
 
 Accumulator example
@@ -302,3 +305,87 @@ some actual values in SI (Système international d'unités):
      -0.6387     #   #        ##:#                                    
      -0.6898     ## #|         ##                                     
      -0.7409      ###                                                 
+
+
+Linear time varying state-space model
+-------------------------------------
+
+Say we have a leaking bucket attached to a spring fixed on the ceiling
+like the previous example::
+
+       \
+       /
+       \
+       /
+      _|_
+    -     -
+    \~~~~~/
+     \   /
+      \_/
+        :
+        :
+        :
+
+Whose mass is linearly decaying at a rate ``r``::
+
+  m(t) = max(0, (ma - r⋅t)) + mb
+
+Where:
+
+- ``ma`` is the starting water mass
+- ``mb`` is the empty bucket mass
+- ``r`` is the rate
+
+Now the ``A`` matrix isn't constant, but every equation used in the
+previous example are still the same. Simulating that with PyScanPrev
+gives us:
+
+.. code-block:: python
+
+  >>> ma = 4.8 # kilogram
+  >>> mb = 0.2 # kilogram
+  >>> r = 0.42 # kilogram / second
+  >>> m = (max(0, (ma - r * k * T)) + mb for k in itertools.count(1))
+  >>> ltv_result = [yk[0, 0] for yk in ltvss(
+  ...     A = (mat([[   1   ,   T     ],
+  ...               [-k*T/mk, 1-c*T/mk]]) for mk in m),
+  ...     B = itertools.repeat(mat([[0], [-g*T]])),
+  ...     C = itertools.repeat(mat([[1, 0]])),
+  ...     D = itertools.repeat(0),
+  ...     u = [1] * num_k, # Step function
+  ...     x0 = mat([0, 0]).T,
+  ... )]
+  >>> plot(ltv_result, num_x_chars=57)
+     -0.0247 #:                                                       
+     -0.0740  #         ###                                           
+     -0.1234  #         # #         ###         #                     
+     -0.1727  ##       ##  #       ## ##       ####      ####      ###
+     -0.2221   #       #   #       #   #      #|  #     ##  ##    #:  
+     -0.2714   #       #   ##     ##   ##    ##   ##    #    ## |#:   
+     -0.3208   #      #|    #     #     #    #     ##  #      ###     
+     -0.3702   .#     #     #     #     ##  ##      ####              
+     -0.4195    #     #     |#   ##      #  #                         
+     -0.4689    #    ##      #   #       ####                         
+     -0.5182    ##   #       ## ##                                    
+     -0.5676     #   #        ###                                     
+     -0.6169     #  ##         #                                      
+     -0.6663     ## #                                                 
+     -0.7156      ###                                                 
+
+The same can be done with a dedicated function:
+
+.. code-block:: python
+
+  >>> @enable_scan("prev")
+  ... def leaking_bucket(ma, mb, r, k, c, g, T, num_k, **unused):
+  ...     m = (max(0, (ma - r * k * T)) + mb for k in range(1, num_k))
+  ...     A = (mat([[   1   ,   T     ],
+  ...               [-k*T/mk, 1-c*T/mk]]) for mk in m)
+  ...     B = mat([0, -g*T]).T
+  ...     x = (Ak * prev + B for Ak in prepend(mat([0, 0]).T, A))
+  ...     return [xk[0, 0] for xk in x]
+  >>> leaking_bucket(**locals()) == ltv_result
+  True
+
+Can you write the ``m[k]`` using PyScanPrev instead of
+``itertools.count`` or ``range``?

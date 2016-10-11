@@ -106,6 +106,7 @@ Examples
       - an accumulator
       - a LTI (Linear Time Invariant) continuous time
         mass-spring-damper SHM (Simple Harmonic Motion) model
+      - a linear time varying "leaking bucket"-spring-damper model
 
       The discretization process is included in the example, and the
       simulations use `hipsterplot`_\  to plot the motion
