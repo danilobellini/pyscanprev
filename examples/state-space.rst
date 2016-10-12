@@ -9,6 +9,7 @@ This example requires:
   >>> import itertools
   >>> from numpy import mat
   >>> from hipsterplot import plot
+  >>> from audiolazy import z
 
 The most sophisticated/interesting examples are the mass-spring-damper
 "bucket" models at the end of this text, which includes a SHM (Simple
@@ -154,6 +155,74 @@ varying:
   ...               [0]]),
   ... )]
   [1, 2, 3, 4, 5, 10, 8, 6, 3, 0]
+
+
+LTI IIR filter example
+----------------------
+
+Say we have a LTI (Linear Time Invariant) IIR (Infinite Impulse
+Response) digital filter that can be expressed as this equation::
+
+  y[k] = 2⋅u[k] - u[k-1] + u[k-2] + y[k-1] - y[k-2]/2
+
+This filter can be expressed by its Z transform (classical method)::
+
+                     -1     -2             -1             -2
+         Y(z)   2 - z  + 2⋅z              z              z
+  H(z) = ──── = ────────────── = 2 + ──────────── + ────────────
+         U(z)        -1   -2              -1   -2        -1   -2
+                1 - z  + z           1 - z  + z     1 - z  + z
+                         ───                  ───            ───
+                          2                    2              2
+
+                         -1
+  H(z) = 2 + F(z) + F(z)z   = 2 + F(z) + G(z)
+
+Going back to time equations, that's::
+
+  y[k] = 2⋅u[k] + f[k] + g[k]
+  f[k] = u[k-1] + f[k-1] - f[k-2]/2
+  g[k] = f[k-1]
+
+Or::
+
+  y[k] = 2⋅u[k] + f[k] + g[k]
+  f[k+1] = u[k] + f[k] - g[k]/2
+  g[k+1] = f[k]
+
+Then our matrices are::
+
+      ⎡1 -1/2⎤        ⎡1⎤
+  A = ⎢      ⎥    B = ⎢ ⎥    C = [1 1]    D = [2]
+      ⎣1   0 ⎦        ⎣0⎦
+
+Let's simulate that for a "triangle" signal as our input:
+
+.. code-block:: python
+
+  >>> triangle = [1, 2, 3, 4, 5, 4, 3, 2, 1, 0]
+  >>> model = ltiss(A = mat([[1, -1/2],
+  ...                        [1,  0  ]]),
+  ...               B = mat([1, 0]).T,
+  ...               C = mat([1, 1]),
+  ...               D = mat(2.0))
+  >>> result = list(model(triangle))
+  >>> [yk[0, 0] for yk in result]
+  [2.0, 5.0, 10.0, 16.5, 23.5, 26.25, 26.5, 22.375, 15.125, 6.9375]
+
+One can compare this with the AudioLazy result for the classic
+modeling method:
+
+.. code-block:: python
+
+  >>> filt = (2 - z**-1 + 2*z**-2) / (1 - z**-1 + z**-2/2)
+  >>> list(filt(triangle))
+  [2.0, 5.0, 10.0, 16.5, 23.5, 26.25, 26.5, 22.375, 15.125, 6.9375]
+
+A simpler LTI IIR filter example can be seen in the
+`Single pole lowpass`_ PyScanPrev example.
+
+.. _`Single pole lowpass`: iir-filter.rst
 
 
 Linear time invariant mass-spring-damper state-space model

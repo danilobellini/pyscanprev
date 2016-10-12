@@ -1,5 +1,5 @@
-IIR filter
-==========
+Single Pole Lowpass IIR filter
+==============================
 
 In this example we'll use these:
 
@@ -138,3 +138,9 @@ filters and their results. FIR (Finite Impulse Response) filters don't
 require knowledge about the previous inputs, these would be done with
 common list comprehensions or AudioLazy ``ZFilter`` objects like
 ``1 - z ** -1``.
+
+The `State-space model`_ PyScanPrev example has more signal
+processing / control theory models, including another LTI filtering
+example.
+
+.. _`State-space model`: state-space.rst

@@ -88,7 +88,7 @@ Examples
       as a scan/fold expression and is useful for testing, as this
       example shows.
 
-  * - `IIR Filter`_
+  * - `Single pole lowpass IIR Filter`_
     - DSP (Digital Signal Processing) applications ofter requires
       feedback, i.e., accessing some previous output value in a
       process. PyScanPrev can be used to write simple signal
@@ -107,10 +107,14 @@ Examples
       - a LTI (Linear Time Invariant) continuous time
         mass-spring-damper SHM (Simple Harmonic Motion) model
       - a linear time varying "leaking bucket"-spring-damper model
+      - another LTI IIR filter, designed from the difference equation
+        and simulated as a state-space model, compared with the
+        `AudioLazy`_ results
 
       The discretization process is included in the example, and the
       simulations use `hipsterplot`_\  to plot the motion
-      path/trajectory.
+      path/trajectory. Also, the convertion from difference equations
+      to a state-space model (via Z Transform) is included.
 
 .. _`Comparison`:
   examples/comparison.rst
@@ -124,7 +128,7 @@ Examples
   examples/fibonacci.rst
 .. _`Gray Code`:
   examples/gray.rst
-.. _`IIR Filter`:
+.. _`Single pole lowpass IIR Filter`:
   examples/iir-filter.rst
 .. _`State-space model`:
   examples/state-space.rst
