@@ -230,18 +230,37 @@ Linear time invariant mass-spring-damper state-space model
 
 **Continuous time bucket-spring-damper model**
 
-There's a spring fixed on the ceiling with a damper, and we're going
-to put a bucket on it::
+There's a spring and damper system fixed on the ceiling, and we're
+going to put a bucket on it::
 
-       \
-       /
-       \
-       /
-      _|_
-    -     -
-    \~~~~~/
-     \   /
-      \_/
+  ════════════╦═══╦═══╦═════════════
+            __│   ╽   │__
+           (__⎠╲  ┃  ╱⎝__)
+            ___╱  ┃  ╲___
+           (__╱╲  ┃  ╱╲__)
+            ___╱ ⎥┃⎢ ╲___
+           (__╱╲ ⎥┃⎢ ╱╲__)
+            ___╱ ⎥┃⎢ ╲___
+           (__╱╲ ⎥┻⎢ ╱╲__)
+            ___╱ ⎥ ⎢ ╲___
+           (__╱╲ ⎥ ⎢ ╱╲__)
+            ___╱ ⎥ ⎢ ╲___
+           (__╱⎞ ⎥ ⎢ ⎛╲__)
+               │ ╰┬╯ │
+               ╘══╪══╛
+                  ┆
+              .-=≈╪≈=-.
+             ╱    ╰╯   ╲
+            /           \
+           ⎥             ⎢
+           |.-'¯‾‾‾‾‾¯'-.|
+           ⎢ ~∽´˜˜‾˜˜`∽~ ⎥
+           ⎢`-._______.-´⎥
+           ⎢             ⎥
+           ⎢             ⎥
+           ⎢             ⎥
+           \             /
+            `-._______.-´
 
 The force equation for that system is::
 
@@ -253,14 +272,14 @@ Where:
 - ``m`` is the bucket mass including its contents
 - ``g`` is the gravity acceleration
 - ``c`` is the damping coefficient
-- ``k`` is the spring stiffness constant
+- ``k`` is the spring stiffness constant (joined)
 - ``a(t) = v̇(t)`` is the bucket acceleration
 - ``v(t) = ḣ(t)`` is the bucket velocity
 - ``h(t)`` is the bucket height
 
 Starting in ``h(0) = 0``, where the spring force (Hooke's law) is
-still zero. That's when the bucket is attached to the spring and
-left to oscillate.
+still zero. That's when the bucket is attached to the springs-damper
+system and left to oscillate.
 
 Everything could be seen as a function of time, and the dot above
 some symbols denotes the derivative with respect to the time.
@@ -379,21 +398,46 @@ some actual values in SI (Système international d'unités):
 Linear time varying state-space model
 -------------------------------------
 
-Say we have a leaking bucket attached to a spring fixed on the ceiling
-like the previous example::
+Say we have a leaking bucket attached to a spring and damper system
+fixed on the ceiling like the previous example::
 
-       \
-       /
-       \
-       /
-      _|_
-    -     -
-    \~~~~~/
-     \   /
-      \_/
-        :
-        :
-        :
+  ════════════╦═══╦═══╦═════════════
+            __│   ╽   │__
+           (__⎠╲  ┃  ╱⎝__)
+            ___╱  ┃  ╲___
+           (__╱╲  ┃  ╱╲__)
+            ___╱ ⎥┃⎢ ╲___
+           (__╱╲ ⎥┃⎢ ╱╲__)
+            ___╱ ⎥┃⎢ ╲___
+           (__╱╲ ⎥┻⎢ ╱╲__)
+            ___╱ ⎥ ⎢ ╲___
+           (__╱╲ ⎥ ⎢ ╱╲__)
+            ___╱ ⎥ ⎢ ╲___
+           (__╱⎞ ⎥ ⎢ ⎛╲__)
+               │ ╰┬╯ │
+               ╘══╪══╛
+                  ┆
+              .-=≈╪≈=-.
+             ╱    ╰╯   ╲
+            /           \
+           ⎥             ⎢
+           |.-'¯‾‾‾‾‾¯'-.|
+           ⎢ ~∽´˜˜‾˜˜`∽~ ⎥
+           ⎢`-._______.-´⎥
+           ⎢             ⎥
+           ⎢             ⎥
+           ⎢           ◉ ⎥
+           \            ▚/
+            `-._______.-´▌
+                         ▚
+                         ▐
+                         ´▌
+                         .▌
+                         ´▐`
+                         ,▐:
+                          ▐:
+                         ''▌.
+                         ,:▌;
 
 Whose mass is linearly decaying at a rate ``r``::
 
