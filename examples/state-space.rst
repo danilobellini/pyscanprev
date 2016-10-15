@@ -175,8 +175,9 @@ This filter can be expressed by its Z transform (classical method)::
                          ───                  ───            ───
                           2                    2              2
 
-                         -1
-  H(z) = 2 + F(z) + F(z)z   = 2 + F(z) + G(z)
+         Y(z)       F(z)   F(z)  -1       F(z)   G(z)
+  H(z) = ──── = 2 + ──── + ────⋅z   = 2 + ──── + ────
+         U(z)       U(z)   U(z)           U(z)   U(z)
 
 Going back to time equations, that's::
 

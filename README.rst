@@ -113,8 +113,9 @@ Examples
 
       The discretization process is included in the example, and the
       simulations use `hipsterplot`_\  to plot the motion
-      path/trajectory. Also, the convertion from difference equations
-      to a state-space model (via Z Transform) is included.
+      path/trajectory. This example includes an explanation/proof to
+      the convertion from difference equations to a state-space model
+      (via Z Transform).
 
 .. _`Comparison`:
   examples/comparison.rst

@@ -19,9 +19,7 @@ approximation for a single pole filter would be:
 
   >>> radius = 0.9
 
-This filter can be described by its Z-Transform equation:
-
-.. code-block:: python
+This filter can be described by its Z-Transform equation::
 
   >>> lowpass(pi / 30)
        0.0993371
@@ -46,12 +44,12 @@ Let's create the filter using PyScanPrev:
   ... def pspfilt(data):
   ...     return [(1 - radius) * xn + radius * yn for xn in data]
 
-Say we have some square way signal at 220.5 Hz, let's get some
+Say we have some square way signal at 315 Hz, let's get some
 milliseconds from that signal:
 
 .. code-block:: python
 
-  >>> data = [0] * 100 + [1] * 100 + [0] * 100 + [1] * 100
+  >>> data = [0] * 70 + [1] * 70 + [0] * 70 + [1] * 70
   >>> plot(data, num_x_chars=56)
       0.9667               ##############              ##############
       0.9000
@@ -78,21 +76,21 @@ Comparing the results for both filters:
   >>> lzresult == pspresult
   True
   >>> plot(pspresult, num_x_chars=56)
-      0.9666                  |##########                 |##########
-      0.9000                 ||          .               :|
-      0.8333                 |           .               |
-      0.7666                :.                          :.
-      0.7000                :            .              :
-      0.6333                :            .              :
-      0.5667                .            .              .
-      0.5000               :             :             :
-      0.4333               .              .            .
-      0.3667               .              :            .
-      0.3000               .              :            .
-      0.2333                              :.
-      0.1667               .               |           .
-      0.1000               .               :|          .
-      0.0333 ##############                 |##########
+      0.9661                    #########                   #########
+      0.8994                  .#         .                .#
+      0.8328                  |          .                |
+      0.7662                 |                           |
+      0.6996                 :           .               :
+      0.6329                :            .              :
+      0.5663                .            .              .
+      0.4997                :             :             :
+      0.4331               .              .            .
+      0.3664               .              :            .
+      0.2998               .               :           .
+      0.2332                               |
+      0.1666               .                |          .
+      0.0999               .                .#         .
+      0.0333 ##############                   #########
 
 Applying it on a sawtooth wave:
 
