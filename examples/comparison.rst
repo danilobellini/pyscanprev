@@ -122,6 +122,8 @@ or you don't care about echoing the first value to the result. There's an
 ``echo_start`` keyword argument for ``scan`` that, together with its optional
 ``start`` argument, allows doing the same:
 
+.. code-block:: python
+
   >>> list(scan(operator.add, range(15), start=0, echo_start=False))
   [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105]
 
@@ -201,6 +203,8 @@ But in this case there's a ``1 * 1`` being done to result in that 1. The same
 can be done with ``scan`` using a command to avoid "echoing" the start to the
 result:
 
+.. code-block:: python
+
   >>> set(scan(lambda prev, x: prev * x ** 2,
   ...          [1, -2, 3, 2], echo_start=False))
   {4, 36, 144}
@@ -252,6 +256,8 @@ On Python 2 there were a built-in called ``reduce``. Python 3 moved it to the
 
 Notice the reversed parameter order when compared to ``accumulate``. Does it
 remind you of the ``pyscanprev.scan`` function?
+
+.. code-block:: python
 
   >>> last(scan(lambda prev, x: prev * x ** 2, [1, -2, 3, 2]))
   144
@@ -330,6 +336,8 @@ Did you know the first lambda argument is prev?
 There's a 3rd parameter for ``scan``, a starting value like the 3rd ``reduce``
 parameter. We already used it, but as a keyword argument:
 
+.. code-block:: python
+
   >>> list(scan(lambda prev, el: el - abs(prev), [5, 6, 7, 8], 15))
   [15, -10, -4, 3, 5]
   >>> list(scan(func = lambda prev, el: el - abs(prev),
@@ -339,12 +347,16 @@ parameter. We already used it, but as a keyword argument:
 
 There's also a possible solution with ``functools.reduce``:
 
+.. code-block:: python
+
   >>> functools.reduce(lambda h, el: h + [el - abs(h[-1])],
   ...                  [5, 6, 7, 8], [15])
   [15, -10, -4, 3, 5]
 
 The function was changed, but that gives us a scan from a fold. These are
-about the same::
+about the same:
+
+.. code-block:: python
 
   # Python standard library, works on Python 2
   functools.reduce(lambda h, x: h + [func(h[-1], x)], iterable, [start])

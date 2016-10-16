@@ -275,7 +275,8 @@ the same cumulative sum with ``itertools.accumulate`` (Python 3.2+):
   >>> list(accumulate(range(5)))
   [0, 1, 3, 6, 10]
 
-It seems the same, but here the first zero output is the ``next(range(5))``,
+It seems the same, but here the first zero output is the
+``next(iter(range(5)))``,
 not the result of a sum or any other ``func`` for that matter (i.e., it
 doesn't depend on ``func`` at all). To be really equivalent to the
 3-for-sections list comprehension above, it would need to be something like:

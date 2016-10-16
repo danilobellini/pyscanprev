@@ -152,7 +152,9 @@ There are several other ways to solve this, e.g.:
 You can store some parts of these "oneliner" declarative solutions in
 variables with expressive names, but even if you do so, implementing
 scan with ``functools.reduce`` would require this pattern or something
-analogous to it::
+analogous to it:
+
+.. code-block:: python
 
   reduce(lambda history, new_data:
              history + [func(history[-1], new_data)],

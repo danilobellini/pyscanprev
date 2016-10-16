@@ -20,7 +20,9 @@ Factorial
   ... def factorial(n):
   ...     return last(prev * k for k in range(2, n + 1) or [1])
 
-The whole logic is in the::
+The whole logic is in the:
+
+.. code-block:: python
 
   last(prev * k for k in range(2, n + 1) or [1])
 
