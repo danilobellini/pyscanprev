@@ -52,7 +52,7 @@ Examples
   * - `Comparison`_
     - Simple scan/accumulate and fold/reduce examples using the
       PyScanPrev resources, the Python standard library and
-      3-for-section comprehensions for comparing the readability
+      the 3-for-section comprehensions for comparing readability
       and expressiveness.
 
   * - `Conditional Toggling`_
@@ -84,7 +84,7 @@ Examples
 
   * - `Gray Code`_
     - Generating Gray codes using the definition is slower than using
-      bytewise operations, but the recursive definition can be written
+      bitwise operations, but the recursive definition can be written
       as a scan/fold expression and is useful for testing, as this
       example shows.
 
@@ -114,7 +114,7 @@ Examples
       The discretization process is included in the example, and the
       simulations use `hipsterplot`_\  to plot the motion
       path/trajectory. This example includes an explanation/proof to
-      the convertion from difference equations to a state-space model
+      the conversion from difference equations to a state-space model
       (via Z Transform).
 
 .. _`Comparison`:
@@ -262,8 +262,9 @@ comprehension appends/"yields" any output/result, since it's also the target
 variable name in that "for" section. So ``start`` is never an output,
 although everything starts with ``prev for prev in [start]``.
 
-It's not only about aesthetics ou readability, but also about memorization.
-Knowledge about the scan abstraction and about the Python language is probably
+It's not only about code aesthetics or readability, but also about
+pattern memorization: knowledge about the scan abstraction
+and about the Python language is probably
 not enough for one to remember that structure.
 
 As ``func`` in the previous example was essentially ``operator.add``, let's do
@@ -286,13 +287,14 @@ doesn't depend on ``func`` at all). To be really equivalent to the
   >>> list(accumulate([0, 0, 1, 2, 3, 4]))[1:]
   [0, 1, 3, 6, 10]
 
-There's a need to prepend ``0`` to ``range(5)``. What's going on here is that
+We had to prepend ``0`` to ``range(5)``. What's going on here is that
 ``accumulate`` returns a generator that yields the values::
 
   [i0, i0+i1, i0+i1+i2, i0+i1+i2+i3, i0+i1+i2+i3+i4, ...]
 
-Where "i\ :sub:`n`" is the n-th value from the ``iterable``. Every step
-obviously uses the result from the previous step instead of summing all again,
+Where "i\ :sub:`n`" is the n-th value from the ``iterable`` input.
+Every step obviously re-uses the previous step result instead
+of summing all the previous inputs again,
 and that's what the scan is all about. On the other hand, the 3-for-sections
 list comprehension does this when ``func`` is the sum/add::
 
@@ -331,14 +333,14 @@ To get the same result with a list comprehension, one would do:
   [3, 28, 29, 30, 34]
 
 There's also a really old package in PyPI called functional_\ ,
-whose last update was in 2006. Besides the without the distinction between
+whose last update was in 2006. Besides the distinction between
 non-strict and "prime"/strict counterparts, it mimics all the
 `4 scan and 4 fold Haskell functions`_\ , including their names
-and their parameter order. From an external perpective,
-``functional.scanl1`` and ``itertools.accumulate`` can be seen as almost the
+and their parameter order. The ``functional.scanl1`` and
+the ``itertools.accumulate`` functions are almost the
 same, the difference is that ``scanl1`` needs the function to be the first
 argument and it isn't optional. On the other hand, ``functional.scanl`` needs
-an extra "start" parameter. Both functions returns a generator:
+an extra "start" parameter. Both functions return a generator:
 
 .. code-block:: python
 
@@ -359,8 +361,9 @@ an extra "start" parameter. Both functions returns a generator:
 Both ``scanl`` and ``scanl1`` have a behavior different from that
 3-for-sections list comprehension.
 
-Python ``functools.reduce``, ``functional.foldl`` and ``functional.foldl1``
-have all the same idea, which is to return the last value of the scan
+Python ``functools.reduce``, ``functional.foldl`` and
+``functional.foldl1``, as fold/reduce implementations,
+share a core idea: they return the last value of the scan
 resulting from the same given inputs to ``functional.scanl`` and
 ``functional.scanl1``. The ``reduce`` function can have an optional ``start``
 as the 3rd and last argument, which gives to it both the behavior of both

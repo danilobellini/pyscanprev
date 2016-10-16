@@ -165,7 +165,9 @@ Response) digital filter that can be expressed as this equation::
 
   y[k] = 2⋅u[k] - u[k-1] + u[k-2] + y[k-1] - y[k-2]/2
 
-This filter can be expressed by its Z transform (classical method)::
+This filter can be expressed by its Z transform (classical method)
+transfer function and rewritten as a parallel filter (i.e., a sum
+of filter transfer functions)::
 
                      -1     -2             -1             -2
          Y(z)   2 - z  + 2⋅z              z              z
@@ -179,7 +181,7 @@ This filter can be expressed by its Z transform (classical method)::
   H(z) = ──── = 2 + ──── + ────⋅z   = 2 + ──── + ────
          U(z)       U(z)   U(z)           U(z)   U(z)
 
-Going back to time equations, that's::
+Going back to the time domain, that's::
 
   y[k] = 2⋅u[k] + f[k] + g[k]
   f[k] = u[k-1] + f[k-1] - f[k-2]/2

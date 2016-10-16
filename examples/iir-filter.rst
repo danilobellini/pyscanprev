@@ -26,7 +26,7 @@ This filter can be described by its Z-Transform equation::
   -------------------
   1 - 0.900663 * z^-1
 
-Let's store this filter with our radius, for further comparison:
+Let's store this filter with our radius for further comparison:
 
 .. code-block:: python
 
@@ -40,12 +40,12 @@ Let's create the filter using PyScanPrev:
 
 .. code-block:: python
 
-  >>> @enable_scan("yn")
+  >>> @enable_scan("yn_1")
   ... def pspfilt(data):
-  ...     return [(1 - radius) * xn + radius * yn for xn in data]
+  ...     return [(1 - radius) * xn + radius * yn_1 for xn in data]
 
-Say we have some square way signal at 315 Hz, let's get some
-milliseconds from that signal:
+Say we have some square way signal at 315 Hz (pi/70 rad/sample),
+let's get 6.35 milliseconds (280 samples) from that signal:
 
 .. code-block:: python
 
@@ -92,7 +92,7 @@ Comparing the results for both filters:
       0.0999               .                .#         .
       0.0333 ##############                   #########
 
-Applying it on a sawtooth wave:
+Applying it on a 150 Hz (pi/147 rad/sample) sawtooth wave:
 
 .. code-block:: python
 
