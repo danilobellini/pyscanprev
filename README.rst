@@ -11,8 +11,12 @@ PyScanPrev
   :target: https://coveralls.io/r/danilobellini/pyscanprev
   :alt: Coveralls coverage report
 
+.. summary
+
 Scan and reduce/fold as generator expressions and list/set
 comprehensions that can access the previous iteration output.
+
+.. summary end
 
 Would you like to replace this:
 
