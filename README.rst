@@ -219,8 +219,14 @@ same?
 Installing
 ----------
 
-You can either use pip::
+You can either use pip:
 
+.. code-block:: shell
+
+  # From PyPI
+  pip install pyscanprev
+
+  # From GitHub master branch
   pip install --upgrade git+https://github.com/danilobellini/pyscanprev
 
 Or setup.py directly::

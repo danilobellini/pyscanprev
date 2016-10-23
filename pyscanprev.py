@@ -1,6 +1,8 @@
 # By Danilo J. S. Bellini
 import types, collections, bytecode
 
+__version__ = "0.1.0"
+
 _EMPTY = object()
 
 def code_mix(code, **changes):
